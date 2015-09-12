@@ -63,7 +63,17 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
             if let images = movie["posters"] as? NSDictionary {
                 if let detailedUrl = images["detailed"] as? String {
                     let photoUrl = NSURL(string:detailedUrl)!
-                    cell.posterView.setImageWithURL(photoUrl)
+                    let request = NSURLRequest(URL: photoUrl)
+                    cell.posterView.setImageWithURLRequest(request, placeholderImage: nil, success: { (req, response, image) -> Void in
+                        cell.posterView.image = image
+                        UIView.animateWithDuration(1, animations: { () -> Void in
+                            cell.posterView.alpha = 1;
+                            
+                        })
+                        }, failure: { (req, response, err) -> Void in
+                            NSLog("ERROR \(err)")
+                        }
+                    )
                 }
             }
         }
