@@ -46,7 +46,18 @@ class MovieDetailsViewController: UIViewController {
                     let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
                     if let poster = responseDictionary["Poster"] as? String {
                         let posterURL = NSURL(string: poster)
-                        self.posterView.setImageWithURL(posterURL!)
+                        let request = NSURLRequest(URL: posterURL!)
+                        self.posterView.alpha = 0
+                        self.posterView.setImageWithURLRequest(request, placeholderImage: nil, success: { (req, response, image) -> Void in
+                            self.posterView.image = image
+                            UIView.animateWithDuration(1, animations: { () -> Void in
+                                self.posterView.alpha = 1;
+                                
+                            })
+                            }, failure: { (req, response, err) -> Void in
+                                NSLog("ERROR \(err)")
+                            }
+                        )
                     }
                 }
             }
