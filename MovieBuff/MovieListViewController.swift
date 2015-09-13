@@ -12,6 +12,8 @@ import AFNetworking
 class MovieListViewController: UIViewController, UITableViewDataSource {
     var refreshControl: UIRefreshControl!
 
+    @IBOutlet weak var networkErrorDescriptionLabel: UILabel!
+    @IBOutlet weak var networkErrorTitleLabel: UILabel!
     @IBOutlet weak var movieTableView: UITableView!
     var movies = []
     
@@ -67,11 +69,9 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
                     cell.posterView.setImageWithURLRequest(request, placeholderImage: nil, success: { (req, response, image) -> Void in
                         cell.posterView.image = image
                         UIView.animateWithDuration(1, animations: { () -> Void in
-                            cell.posterView.alpha = 1;
-                            
+                            cell.posterView.alpha = 1
                         })
                         }, failure: { (req, response, err) -> Void in
-                            NSLog("ERROR \(err)")
                         }
                     )
                 }
@@ -79,6 +79,18 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
         }
         
         return cell
+    }
+    
+    func hideNetworkErrorLabel() {
+        networkErrorDescriptionLabel.alpha = 0
+        networkErrorTitleLabel.alpha = 0
+    }
+    
+    func showNetworkErrorLabel() {
+        UIView.animateWithDuration(0.5, animations: { () -> Void in
+            self.networkErrorDescriptionLabel.alpha = 1
+            self.networkErrorTitleLabel.alpha = 1
+        })
     }
     
     func newShuffledArray(array:NSArray) -> NSArray {
@@ -93,21 +105,26 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
     }
     
     func makeNetworkRequest() {
+        hideNetworkErrorLabel()
         let clientId = "f2fk8pundhpxf77fscxvkupy"
         
         let url = NSURL(string: "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?apiKey=\(clientId)")!
         let request = NSURLRequest(URL: url)
         
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
-            let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
-            
-            
-            self.movies = responseDictionary["movies"] as! NSArray
-            self.movies = self.newShuffledArray(self.movies)
-            
-            self.movieTableView.reloadData()
             self.refreshControl.endRefreshing()
+            if (error != nil) {
+                self.showNetworkErrorLabel()
+            }
+            else {
+                let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(data!, options: []) as! NSDictionary
             
+            
+                self.movies = responseDictionary["movies"] as! NSArray
+                self.movies = self.newShuffledArray(self.movies)
+            
+                self.movieTableView.reloadData()
+            }
             
         }
     }
