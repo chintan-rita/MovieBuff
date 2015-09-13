@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "893A21D24A13BF75C9C9CB55"
+               BlueprintIdentifier = "E6220946E710D87CAA90EE9D"
                BuildableName = "Pods_MovieBuff.framework"
                BlueprintName = "Pods-MovieBuff"
                ReferencedContainer = "container:Pods.xcodeproj">

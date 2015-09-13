@@ -8,6 +8,7 @@
 
 import UIKit
 import AFNetworking
+import JTProgressHUD
 
 class MovieListViewController: UIViewController, UITableViewDataSource {
     var refreshControl: UIRefreshControl!
@@ -19,7 +20,7 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         makeNetworkRequest()
         
@@ -32,6 +33,7 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
     }
     
     func onRefresh() {
+        JTProgressHUD.show()
         makeNetworkRequest()
     }
     
@@ -105,6 +107,8 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
     }
     
     func makeNetworkRequest() {
+        JTProgressHUD.show()
+
         hideNetworkErrorLabel()
         let clientId = "f2fk8pundhpxf77fscxvkupy"
         
@@ -112,6 +116,7 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
         let request = NSURLRequest(URL: url)
         
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) { (response, data, error) -> Void in
+            JTProgressHUD.hide()
             self.refreshControl.endRefreshing()
             if (error != nil) {
                 self.showNetworkErrorLabel()
