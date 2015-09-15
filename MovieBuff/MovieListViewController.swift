@@ -23,7 +23,8 @@ class MovieListViewController: UIViewController, UITableViewDataSource, UISearch
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        JTProgressHUD.show()
+
         // Do any additional setup after loading the view.
         makeNetworkRequest()
         
@@ -112,11 +113,13 @@ class MovieListViewController: UIViewController, UITableViewDataSource, UISearch
     }
     
     func hideNetworkErrorLabel() {
+        self.searchField.hidden = false
         networkErrorDescriptionLabel.alpha = 0
         networkErrorTitleLabel.alpha = 0
     }
     
     func showNetworkErrorLabel() {
+        self.searchField.hidden = true
         UIView.animateWithDuration(0.5, animations: { () -> Void in
             self.networkErrorDescriptionLabel.alpha = 1
             self.networkErrorTitleLabel.alpha = 1

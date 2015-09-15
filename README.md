@@ -26,6 +26,7 @@ Time spent: 3
 
 ### Walkthrough
 ![Video Walkthrough](moviebuff.gif)
+![Video Walkthrough - Error](moviebuff2.gif)
 
 Credits
 ---------
