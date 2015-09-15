@@ -10,7 +10,7 @@ import UIKit
 import AFNetworking
 import JTProgressHUD
 
-class   : UIViewController, UITableViewDataSource, UISearchBarDelegate {
+class   MovieListViewController: UIViewController, UITableViewDataSource, UISearchBarDelegate {
     var refreshControl: UIRefreshControl!
 
     @IBOutlet weak var networkErrorDescriptionLabel: UILabel!
