@@ -10,13 +10,16 @@ import UIKit
 import AFNetworking
 import JTProgressHUD
 
-class MovieListViewController: UIViewController, UITableViewDataSource {
+class   : UIViewController, UITableViewDataSource, UISearchBarDelegate {
     var refreshControl: UIRefreshControl!
 
     @IBOutlet weak var networkErrorDescriptionLabel: UILabel!
+    @IBOutlet weak var searchField: UISearchBar!
     @IBOutlet weak var networkErrorTitleLabel: UILabel!
     @IBOutlet weak var movieTableView: UITableView!
+    
     var movies = []
+    var allMovies = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,8 +31,33 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
         refreshControl.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
         
         self.movieTableView.insertSubview(refreshControl, atIndex: 0)
-        
-        
+        searchField.delegate = self
+    }
+    
+    func searchBar(_searchBar: UISearchBar,
+        textDidChange searchText: String) {
+            if (searchText.isEmpty) {
+                self.movies = self.allMovies
+            }
+            else {
+                self.movies = self.allMovies.filter({ (movie) -> Bool in
+                    if let title = movie["title"] as? String {
+                        return title.containsString(searchText)
+                    }
+                    return false
+                })
+            }
+            self.movieTableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        self.movies = self.allMovies
+        self.movieTableView.reloadData()
+        self.searchField.resignFirstResponder()
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        self.searchField.resignFirstResponder()
     }
     
     func onRefresh() {
@@ -127,6 +155,7 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
             
                 self.movies = responseDictionary["movies"] as! NSArray
                 self.movies = self.newShuffledArray(self.movies)
+                self.allMovies = self.movies
             
                 self.movieTableView.reloadData()
             }
@@ -140,6 +169,9 @@ class MovieListViewController: UIViewController, UITableViewDataSource {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
+        self.searchField.resignFirstResponder()
+        
         let vc = segue.destinationViewController as! MovieDetailsViewController
         let indexPath = movieTableView.indexPathForCell(sender as! UITableViewCell)
         
