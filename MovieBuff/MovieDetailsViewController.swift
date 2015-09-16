@@ -21,6 +21,8 @@ class MovieDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.descriptionTextView.scrollEnabled = false
+
         originalOrigin = self.descriptionTextView.frame.origin
         originalSize = self.descriptionTextView.frame.size
         let aSelector = Selector("animateTextView")
@@ -39,7 +41,20 @@ class MovieDetailsViewController: UIViewController {
     func animateTextView() {
         if (animated) {
             UIView.animateWithDuration(1.0, animations: {
-                self.descriptionTextView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
+                var frame:CGRect = self.descriptionTextView.frame
+                frame.size = self.descriptionTextView.sizeThatFits(CGSize(width: self.view.frame.width, height: CGFloat.max))
+                frame.origin.y = self.view.frame.height - frame.size.height
+                if frame.origin.y < 0 {
+                    frame.origin.y = 0
+                    frame.size.height = self.view.frame.height
+                    self.descriptionTextView.scrollEnabled = true
+                    self.descriptionTextView.showsVerticalScrollIndicator = true
+                }
+                else {
+                    self.descriptionTextView.scrollEnabled = false
+                    self.descriptionTextView.showsVerticalScrollIndicator = false
+                }
+                self.descriptionTextView.frame = frame
             })
         }
         else {
